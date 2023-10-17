@@ -244,8 +244,16 @@ h1 {
   font-size: 24px;
   padding: 10px 20px;
   margin: 0 10px;
+  border-radius: 15px;
+  border: 2px solid #36454f;
+  background-color: #fffffa;
+  transition-duration: 0.4s;
+  width: 100px;
+  text-align: center;
 }
 
-.buttons button:focus {
-  outline: none;
+.buttons button:hover {
+  background-color: #011f01;
+  color: #ffffff;
+  border: 2px solid #e7e7e7;
 }
