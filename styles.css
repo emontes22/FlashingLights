@@ -237,6 +237,8 @@ h1 {
 }
 
 .buttons {
+  display: flex;
+  justify-content: center;
   margin-top: 90px;
 }
 
@@ -248,12 +250,34 @@ h1 {
   border: 2px solid #36454f;
   background-color: #fffffa;
   transition-duration: 0.4s;
-  width: 100px;
-  text-align: center;
 }
 
 .buttons button:hover {
   background-color: #011f01;
   color: #ffffff;
   border: 2px solid #e7e7e7;
+}
+
+.slider-container {
+  width: 220px;
+  margin-left: 100px;
+  display: flex;
+  align-items: center;
+  border: 2px solid #36454f;
+  padding: 10px;
+  background-color: #fffffa;
+  border-radius: 15px;
+  position: relative;
+}
+
+.slider-container .slider-label {
+  margin-right: 10px;
+  flex: 1;
+  white-space: nowrap;
+}
+
+input[type="range"] {
+  width: 100px;
+  border: none;
+  background-color: #fffffa;
 }
