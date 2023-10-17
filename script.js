@@ -1,51 +1,100 @@
-let originalColors = [];
-let isButtonCooldown = false;
+class LightsController {
+    constructor() {
+        this.originalColors = [];
+        this.isButtonCooldown = false;
+        this.areLightsOn = false;
+        this.circles = document.querySelectorAll('.circle');
+        this.slider = document.getElementById('speedSlider');
+        this.sliderValueElement = document.querySelector('.slider-value');
 
-function turnOffLights() {
+        this.slider.addEventListener('input', this.onSliderInputChange.bind(this));
+    }
 
-    if (isButtonCooldown) return;
+    turnOffLights() {
+        if (this.isButtonCooldown) return;
+        this.areLightsOn = false;
 
-    const circles = document.querySelectorAll('.circle');
-    circles.forEach((circle, index) => {
-        // Store the original color before turning off the lights
-        originalColors[index] = circle.style.backgroundColor;
+        this.circles.forEach((circle, index) => {
+            this.storeOriginalColor(circle, index);
+            this.resetCircleStyles(circle);
+        });
 
-        // Clear animation properties
+        this.setButtonCooldown();
+    }
+
+    turnOnLights() {
+        if (this.isButtonCooldown) return;
+        this.areLightsOn = true;
+
+        if (this.areLightsOn) this.resetSlider();
+
+        this.circles.forEach((circle, index) => {
+            this.activateCircleGlow(circle, index);
+        });
+
+        this.setButtonCooldown();
+    }
+
+    onSliderInputChange() {
+        const value = this.slider.value;
+        this.updateSliderValue(value);
+
+        if (this.areLightsOn) {
+            const animationDuration = `${1 / value}s`;
+            this.circles.forEach((circle, index) => {
+                this.adjustAnimationDuration(circle, index, animationDuration);
+            });
+        }
+    }
+
+    adjustAnimationDuration(circle, index, duration) {
+        if (this.areLightsOn) {
+            circle.style.animation = `glow${index + 1} ${duration} infinite`;
+        }
+    }
+
+    resetCircleStyles(circle) {
         circle.style.animation = 'none';
         circle.style.animationPlayState = 'paused';
-
         circle.style.backgroundColor = 'gray';
         circle.style.boxShadow = 'none';
-    });
+    }
 
-    // Set a cooldown of 1 second
-    isButtonCooldown = true;
-    setTimeout(() => {
-        isButtonCooldown = false;
-    }, 1000);
+    resetSlider() {
+        this.slider.value = 1;
+        this.updateSliderValue(1);
+    }
+
+    storeOriginalColor(circle, index) {
+        this.originalColors[index] = circle.style.backgroundColor;
+    }
+
+    updateSliderValue(value) {
+        this.sliderValueElement.setAttribute('data-value', value);
+        this.sliderValueElement.innerText = value;
+    }
+
+    activateCircleGlow(circle, index) {
+        if (this.areLightsOn) {
+            this.restoreCircleColor(circle, index);
+            const defaultAnimationDuration = `${1 / 1}s`;
+            circle.style.animation = `glow${index + 1} ${defaultAnimationDuration} infinite`;
+            circle.style.animationPlayState = 'running';
+        }
+    }
+
+    restoreCircleColor(circle, index) {
+        circle.style.backgroundColor = this.originalColors[index];
+        circle.style.boxShadow = `0%, 100% 0 0 20px 10px ${this.originalColors[index]}`;
+        circle.style.boxShadow = 'none';
+    }
+
+    setButtonCooldown() {
+        this.isButtonCooldown = true;
+        setTimeout(() => {
+            this.isButtonCooldown = false;
+        }, 1000);
+    }
 }
 
-function turnOnLights() {
-
-    if (isButtonCooldown) return;
-
-    const circles = document.querySelectorAll('.circle');
-
-    circles.forEach((circle, index) => {
-        circle.style.animationPlayState = 'running';
-
-        // Restore the original color
-        circle.style.backgroundColor = originalColors[index];
-        circle.style.boxShadow = `0%, 100% 0 0 20px 10px ${originalColors[index]}`;
-        circle.style.boxShadow = `none`;
-
-        // Modify the delay to smoothly start the glow effect
-        circle.style.animation = `glow${index + 1} 1s infinite`;
-    });
-
-    // Set a cooldown of 1 second
-    isButtonCooldown = true;
-    setTimeout(() => {
-        isButtonCooldown = false;
-    }, 1000);
-}
+const lightsController = new LightsController();
