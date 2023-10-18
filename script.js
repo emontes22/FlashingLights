@@ -6,17 +6,31 @@ class LightsController {
         this.circles = document.querySelectorAll('.circle');
         this.slider = document.getElementById('speedSlider');
         this.sliderValueElement = document.querySelector('.slider-value');
+        this.sliderDefaultValue = 1;
 
+        this.initialize();
+    }
+
+    initialize() {
+        this.onSliderInputChange();
         this.slider.addEventListener('input', this.onSliderInputChange.bind(this));
+        this.slider.dispatchEvent(new Event('input', { bubbles: true }));
+
+        window.addEventListener('load', () => {
+            this.turnOnLights();
+        });
     }
 
     turnOffLights() {
         if (this.isButtonCooldown) return;
         this.areLightsOn = false;
 
+        this.resetSlider();
+
         this.circles.forEach((circle, index) => {
             this.storeOriginalColor(circle, index);
             this.resetCircleStyles(circle);
+            circle.style.animation = 'none';
         });
 
         this.setButtonCooldown();
@@ -26,7 +40,7 @@ class LightsController {
         if (this.isButtonCooldown) return;
         this.areLightsOn = true;
 
-        if (this.areLightsOn) this.resetSlider();
+        this.resetSlider();
 
         this.circles.forEach((circle, index) => {
             this.activateCircleGlow(circle, index);
@@ -39,17 +53,21 @@ class LightsController {
         const value = this.slider.value;
         this.updateSliderValue(value);
 
-        if (this.areLightsOn) {
-            const animationDuration = `${1 / value}s`;
-            this.circles.forEach((circle, index) => {
+        const animationDuration = `${1 / value}s`;
+        this.circles.forEach((circle, index) => {
+            if (this.areLightsOn) {
                 this.adjustAnimationDuration(circle, index, animationDuration);
-            });
-        }
+            } else {
+                circle.style.animation = 'none';
+            }
+        });
     }
 
     adjustAnimationDuration(circle, index, duration) {
         if (this.areLightsOn) {
             circle.style.animation = `glow${index + 1} ${duration} infinite`;
+        } else {
+            circle.style.animation = 'none';
         }
     }
 
@@ -77,8 +95,10 @@ class LightsController {
     activateCircleGlow(circle, index) {
         if (this.areLightsOn) {
             this.restoreCircleColor(circle, index);
-            const defaultAnimationDuration = `${1 / 1}s`;
-            circle.style.animation = `glow${index + 1} ${defaultAnimationDuration} infinite`;
+
+            const sliderValue = parseFloat(this.slider.value);
+            const animationDuration = `${1 / sliderValue}s`;
+            circle.style.animation = `glow${index + 1} ${animationDuration} infinite`;
             circle.style.animationPlayState = 'running';
         }
     }
