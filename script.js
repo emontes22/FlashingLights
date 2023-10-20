@@ -2,22 +2,24 @@ class LightsController {
     constructor() {
         this.originalColors = [];
         this.isButtonCooldown = false;
-        this.areLightsOn = false;
+        this.areLightsOn = true;
         this.circles = document.querySelectorAll('.circle');
         this.slider = document.getElementById('speedSlider');
         this.sliderValueElement = document.querySelector('.slider-value');
         this.sliderDefaultValue = 1;
 
-        this.initialize();
+        this.initializeLights();
+
+        this.slider.addEventListener('input', this.onSliderInputChange.bind(this));
     }
 
-    initialize() {
-        this.onSliderInputChange();
-        this.slider.addEventListener('input', this.onSliderInputChange.bind(this));
-        this.slider.dispatchEvent(new Event('input', { bubbles: true }));
-
-        window.addEventListener('load', () => {
-            this.turnOnLights();
+    initializeLights() {
+        this.circles.forEach((circle, index) => {
+            this.originalColors[index] = circle.style.backgroundColor;
+            const lightGroup = circle.getAttribute('data-light-group');
+            if (lightGroup === 'even') {
+                this.activateCircleGlow(circle, index);
+            }
         });
     }
 
@@ -115,6 +117,32 @@ class LightsController {
             this.isButtonCooldown = false;
         }, 1000);
     }
+
+    startBlinkingPattern() {
+        let evenGroupOn = true;
+
+        const toggleBlinking = () => {
+            this.circles.forEach((circle, index) => {
+                const lightGroup = circle.getAttribute('data-light-group');
+
+                if ((evenGroupOn && lightGroup === 'even') || (!evenGroupOn && lightGroup === 'odd')) {
+                    this.activateCircleGlow(circle, index);
+                } else {
+                    this.resetGlowEffect(circle);
+                }
+            });
+
+            evenGroupOn = !evenGroupOn;
+        };
+
+        toggleBlinking();
+        setInterval(toggleBlinking, 480);
+    }
+
+    resetGlowEffect(circle) {
+        circle.style.animation = 'none';
+    }
 }
 
 const lightsController = new LightsController();
+lightsController.startBlinkingPattern();
