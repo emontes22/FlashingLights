@@ -142,7 +142,34 @@ class LightsController {
     resetGlowEffect(circle) {
         circle.style.animation = 'none';
     }
+
+    createSnowflake() {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+
+        // Set random size for the snowflake
+        const size = Math.random() * 15 + 5;
+        snowflake.style.width = size + 'px';
+        snowflake.style.height = size + 'px';
+
+        // Set random position for the snowflake
+        const x = Math.random() * window.innerWidth;
+        const duration = Math.random() * 8 + 8; // Adjust speed as needed
+        snowflake.style.left = x + 'px';
+        snowflake.style.animation = `fall ${duration}s linear infinite`;
+
+        // Append snowflake to the container
+        document.querySelector('.snowflakes-container').appendChild(snowflake);
+    }
 }
 
 const lightsController = new LightsController();
 lightsController.startBlinkingPattern();
+
+// Call createSnowflake to add initial snowflakes
+lightsController.createSnowflake();
+
+// Create new snowflakes every few seconds
+setInterval(() => {
+    lightsController.createSnowflake();
+}, 200); // Adjust timing as needed
