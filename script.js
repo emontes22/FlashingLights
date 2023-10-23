@@ -6,18 +6,20 @@ class LightsController {
         this.circles = document.querySelectorAll('.circle');
         this.slider = document.getElementById('speedSlider');
         this.sliderValueElement = document.querySelector('.slider-value');
+
         this.sliderDefaultValue = 1;
 
         this.initializeLights();
-
         this.slider.addEventListener('input', this.onSliderInputChange.bind(this));
+        this.createSnowflake();
+
+        setInterval(this.createSnowflake.bind(this), 100);
     }
 
     initializeLights() {
         this.circles.forEach((circle, index) => {
             this.originalColors[index] = circle.style.backgroundColor;
-            const lightGroup = circle.getAttribute('data-light-group');
-            if (lightGroup === 'even') {
+            if (circle.dataset.lightGroup === 'even') {
                 this.activateCircleGlow(circle, index);
             }
         });
@@ -26,51 +28,38 @@ class LightsController {
     turnOffLights() {
         if (this.isButtonCooldown) return;
         this.areLightsOn = false;
-
         this.resetSlider();
-
         this.circles.forEach((circle, index) => {
             this.storeOriginalColor(circle, index);
             this.resetCircleStyles(circle);
             circle.style.animation = 'none';
         });
-
         this.setButtonCooldown();
     }
 
     turnOnLights() {
         if (this.isButtonCooldown) return;
         this.areLightsOn = true;
-
         this.resetSlider();
-
         this.circles.forEach((circle, index) => {
             this.activateCircleGlow(circle, index);
         });
-
         this.setButtonCooldown();
     }
 
     onSliderInputChange() {
         const value = this.slider.value;
         this.updateSliderValue(value);
-
         const animationDuration = `${1 / value}s`;
         this.circles.forEach((circle, index) => {
-            if (this.areLightsOn) {
-                this.adjustAnimationDuration(circle, index, animationDuration);
-            } else {
-                circle.style.animation = 'none';
-            }
+            this.adjustAnimationDuration(circle, index, animationDuration);
         });
     }
 
     adjustAnimationDuration(circle, index, duration) {
-        if (this.areLightsOn) {
-            circle.style.animation = `glow${index + 1} ${duration} infinite`;
-        } else {
-            circle.style.animation = 'none';
-        }
+        circle.style.animation = this.areLightsOn
+            ? `glow${index + 1} ${duration} infinite`
+            : 'none';
     }
 
     resetCircleStyles(circle) {
@@ -90,14 +79,13 @@ class LightsController {
     }
 
     updateSliderValue(value) {
-        this.sliderValueElement.setAttribute('data-value', value);
+        this.sliderValueElement.dataset.value = value;
         this.sliderValueElement.innerText = value;
     }
 
     activateCircleGlow(circle, index) {
         if (this.areLightsOn) {
             this.restoreCircleColor(circle, index);
-
             const sliderValue = parseFloat(this.slider.value);
             const animationDuration = `${1 / sliderValue}s`;
             circle.style.animation = `glow${index + 1} ${animationDuration} infinite`;
@@ -123,7 +111,7 @@ class LightsController {
 
         const toggleBlinking = () => {
             this.circles.forEach((circle, index) => {
-                const lightGroup = circle.getAttribute('data-light-group');
+                const lightGroup = circle.dataset.lightGroup;
 
                 if ((evenGroupOn && lightGroup === 'even') || (!evenGroupOn && lightGroup === 'odd')) {
                     this.activateCircleGlow(circle, index);
@@ -147,29 +135,33 @@ class LightsController {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
 
-        // Set random size for the snowflake
         const size = Math.random() * 15 + 5;
         snowflake.style.width = size + 'px';
         snowflake.style.height = size + 'px';
 
-        // Set random position for the snowflake
-        const x = Math.random() * window.innerWidth;
-        const duration = Math.random() * 8 + 8; // Adjust speed as needed
+        const pattern = Math.random() < 0.5 ? 'right' : 'down';
+
+        let x, y, duration;
+
+        if (pattern === 'right') {
+            x = Math.random() * window.innerWidth;
+            y = -Math.random() * window.innerHeight;
+            duration = Math.random() * 5 + 5;
+        } else {
+            x = Math.random() * window.innerWidth;
+            y = -Math.random() * window.innerHeight;
+            duration = Math.random() * 8 + 8;
+        }
+
+        snowflake.dataset.pattern = pattern;
+
         snowflake.style.left = x + 'px';
+        snowflake.style.top = y + 'px';
         snowflake.style.animation = `fall ${duration}s linear infinite`;
 
-        // Append snowflake to the container
         document.querySelector('.snowflakes-container').appendChild(snowflake);
     }
 }
 
 const lightsController = new LightsController();
 lightsController.startBlinkingPattern();
-
-// Call createSnowflake to add initial snowflakes
-lightsController.createSnowflake();
-
-// Create new snowflakes every few seconds
-setInterval(() => {
-    lightsController.createSnowflake();
-}, 200); // Adjust timing as needed
