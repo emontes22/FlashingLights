@@ -1,21 +1,31 @@
 class LightsController {
     constructor() {
+        // Arrays to store original colors of circles
         this.originalColors = [];
+        // Flag to prevent button clicks during cooldown
         this.isButtonCooldown = false;
+        // Flag to track the state of the lights (on or off)
         this.areLightsOn = true;
+        // Get all the circle elements
         this.circles = document.querySelectorAll('.circle');
+        // Get the speed slider
         this.slider = document.getElementById('speedSlider');
+        // Get the slider value element
         this.sliderValueElement = document.querySelector('.slider-value');
 
+        // Default value for the slider
         this.sliderDefaultValue = 1;
 
+        // Initialize lights and set event listeners
         this.initializeLights();
         this.slider.addEventListener('input', this.onSliderInputChange.bind(this));
         this.createSnowflake();
 
+        // Create snowflakes at regular intervals
         setInterval(this.createSnowflake.bind(this), 100);
     }
 
+    // Initialize the colors and animations of the circles
     initializeLights() {
         this.circles.forEach((circle, index) => {
             this.originalColors[index] = circle.style.backgroundColor;
@@ -26,6 +36,7 @@ class LightsController {
     }
 
     turnOffLights() {
+        // Prevent button clicks during cooldown (avoid spamming of buttons)
         if (this.isButtonCooldown) return;
         this.areLightsOn = false;
         this.resetSlider();
@@ -38,6 +49,7 @@ class LightsController {
     }
 
     turnOnLights() {
+        // Prevent button clicks during cooldown (avoid spamming of buttons)
         if (this.isButtonCooldown) return;
         this.areLightsOn = true;
         this.resetSlider();
@@ -47,6 +59,7 @@ class LightsController {
         this.setButtonCooldown();
     }
 
+    // Handle slider input change
     onSliderInputChange() {
         const value = this.slider.value;
         this.updateSliderValue(value);
@@ -56,6 +69,7 @@ class LightsController {
         });
     }
 
+    // Adjust animation duration for circles
     adjustAnimationDuration(circle, index, duration) {
         circle.style.animation = this.areLightsOn
             ? `glow${index + 1} ${duration} infinite`
@@ -93,12 +107,14 @@ class LightsController {
         }
     }
 
+    // Restore the color and shadow of a circle
     restoreCircleColor(circle, index) {
         circle.style.backgroundColor = this.originalColors[index];
         circle.style.boxShadow = `0%, 100% 0 0 20px 10px ${this.originalColors[index]}`;
         circle.style.boxShadow = 'none';
     }
 
+    // Set a cooldown period to prevent spamming of button clicks
     setButtonCooldown() {
         this.isButtonCooldown = true;
         setTimeout(() => {
@@ -124,6 +140,7 @@ class LightsController {
         };
 
         toggleBlinking();
+        // Toggle the blinking pattern at regular intervals
         setInterval(toggleBlinking, 480);
     }
 
@@ -131,6 +148,7 @@ class LightsController {
         circle.style.animation = 'none';
     }
 
+    // Create snowflake elements with random size and falling pattern
     createSnowflake() {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
@@ -163,10 +181,13 @@ class LightsController {
     }
 }
 
+// Initialize LightsController class
 const lightsController = new LightsController();
 lightsController.startBlinkingPattern();
 
 class MusicPlayer {
+
+    // Get references to DOM elements
     constructor() {
         this.albumCoverImg = document.getElementById('album-cover-img');
         this.songTitle = document.getElementById('song-title');
@@ -180,6 +201,7 @@ class MusicPlayer {
         this.timer = document.getElementById('timer');
         this.dragging = false;
 
+        // Music data for songs
         this.musicData = [
             {
                 albumCover: 'assets/images/cover1.jpg',
@@ -252,6 +274,7 @@ class MusicPlayer {
         this.initMusicPlayer();
     }
 
+    // Initialize the music player by setting up event listeners and initial UI state
     initMusicPlayer() {
         this.albumCoverImg.src = this.currentSong.albumCover;
         this.songTitle.textContent = this.currentSong.title;
@@ -259,40 +282,43 @@ class MusicPlayer {
         this.album.textContent = this.currentSong.album;
         this.volumeControl.value = 50;
 
+        // Event listeners for play/pause, skip, volume control
         this.playPauseButton.addEventListener('click', this.togglePlayPause.bind(this));
         this.skipButton.addEventListener('click', this.skipToNext.bind(this));
         this.volumeControl.addEventListener('input', this.adjustVolume.bind(this));
 
+        // Event listeners for seeking in the song
         this.progressBar.addEventListener('click', this.seek.bind(this));
-
         this.progressBar.addEventListener('mousedown', (e) => {
             this.dragging = true;
             this.seek(e);
         });
 
+        // Handle mouseup event to stop dragging
         document.addEventListener('mousemove', (e) => {
             if (this.dragging) {
                 this.seek(e);
             }
         });
-
         document.addEventListener('mouseup', () => {
             this.dragging = false;
         });
 
+        // Listen for audio time updates and song end
         this.audioElement.addEventListener('timeupdate', this.updateProgressBar.bind(this));
-
         this.audioElement.addEventListener('ended', () => {
             this.playPauseButton.textContent = 'Play';
             this.progressBar.style.width = '0%';
             this.timer.textContent = '0:00 / 0:00';
         });
 
+        // Event listener for skipping to the next song
         this.skipButton.addEventListener('click', () => {
             this.skipToNext();
         });
     }
 
+    // Toggle between play and pause for the audio element
     togglePlayPause() {
         if (this.audioElement.paused) {
             this.audioElement.play();
@@ -303,10 +329,13 @@ class MusicPlayer {
         }
     }
 
+    // Skip to the next song in the playlist
     skipToNext() {
         this.currentSongIndex = (this.currentSongIndex + 1) % this.musicData.length;
         this.currentSong = this.musicData[this.currentSongIndex];
         this.updateUI();
+
+        // Pause the current song, set the new source, and play it
         this.audioElement.pause();
         this.audioElement.src = '';
         this.audioElement.src = this.currentSong.audioFile;
@@ -316,6 +345,7 @@ class MusicPlayer {
         };
     }
 
+    // Update the user interface with song information
     updateUI() {
         this.albumCoverImg.src = this.currentSong.albumCover;
         this.songTitle.textContent = this.currentSong.title;
@@ -327,6 +357,7 @@ class MusicPlayer {
         this.audioElement.volume = this.volumeControl.value / 100;
     }
 
+    // Seek to a specific point in the song based on user input
     seek(e) {
         const audio = this.audioElement;
         const percent = e.offsetX / document.querySelector('.progress-bar').offsetWidth;
@@ -334,11 +365,13 @@ class MusicPlayer {
         audio.currentTime = seekTime;
     }
 
+    // Update the progress bar to reflect the current position in the song
     updateProgressBar() {
         const currentTime = this.audioElement.currentTime;
         const duration = this.audioElement.duration;
         const progress = (currentTime / duration) * 100;
 
+        // Format the time display
         const currentMinutes = Math.floor(currentTime / 60);
         const currentSeconds = Math.floor(currentTime % 60);
         const durationMinutes = Math.floor(duration / 60);
@@ -352,4 +385,5 @@ class MusicPlayer {
     }
 }
 
+// Initialize LightsController class
 const musicPlayer = new MusicPlayer();
