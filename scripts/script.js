@@ -165,3 +165,114 @@ class LightsController {
 
 const lightsController = new LightsController();
 lightsController.startBlinkingPattern();
+
+class MusicPlayer {
+    constructor() {
+        this.albumCoverImg = document.getElementById('album-cover-img');
+        this.songTitle = document.getElementById('song-title');
+        this.artist = document.getElementById('artist');
+        this.album = document.getElementById('album');
+        this.skipButton = document.getElementById('skip-button');
+        this.playPauseButton = document.getElementById('play-pause-button');
+        this.volumeControl = document.getElementById('volume-control');
+        this.audioElement = document.getElementById('audio-element');
+        this.progressBar = document.getElementById('progress');
+        this.timer = document.getElementById('timer');
+        this.dragging = false;
+
+        this.musicData = {
+            albumCover: '/cover.jpg',
+            title: 'Riders in the Sky',
+            artist: 'Johnny Cash',
+            album: 'Ghost',
+            audioFile: '/(Ghost) Riders in the Sky - Johnny Cash.mp3',
+        };
+
+        this.initMusicPlayer();
+    }
+
+    initMusicPlayer() {
+        this.albumCoverImg.src = this.musicData.albumCover;
+        this.songTitle.textContent = this.musicData.title;
+        this.artist.textContent = this.musicData.artist;
+        this.album.textContent = this.musicData.album;
+        this.volumeControl.value = 50;
+
+        this.playPauseButton.addEventListener('click', this.togglePlayPause.bind(this));
+        this.skipButton.addEventListener('click', this.skipToNext.bind(this));
+        this.volumeControl.addEventListener('input', this.adjustVolume.bind(this));
+
+        this.progressBar.addEventListener('click', this.seek.bind(this));
+
+        this.progressBar.addEventListener('mousedown', (e) => {
+            this.dragging = true;
+            this.seek(e);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (this.dragging) {
+                this.seek(e);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            this.dragging = false;
+        });
+
+        this.audioElement.addEventListener('timeupdate', this.updateProgressBar.bind(this));
+
+        this.audioElement.addEventListener('ended', () => {
+            this.playPauseButton.textContent = 'Play';
+            this.progressBar.style.width = '0%';
+            this.timer.textContent = '0:00 / 0:00';
+        });
+
+        this.skipButton.addEventListener('click', () => {
+            // Implement logic to skip to the next song
+        });
+    }
+
+    togglePlayPause() {
+        if (this.audioElement.paused) {
+            this.audioElement.play();
+            this.playPauseButton.textContent = 'Pause';
+        } else {
+            this.audioElement.pause();
+            this.playPauseButton.textContent = 'Play';
+        }
+    }
+
+    skipToNext() {
+        // Implement logic to skip to the next song
+    }
+
+    adjustVolume() {
+        this.audioElement.volume = this.volumeControl.value / 100;
+    }
+
+    seek(e) {
+        const audio = this.audioElement;
+        const percent = e.offsetX / document.querySelector('.progress-bar').offsetWidth;
+        const seekTime = percent * audio.duration;
+        audio.currentTime = seekTime;
+    }
+
+    updateProgressBar() {
+        const currentTime = this.audioElement.currentTime;
+        const duration = this.audioElement.duration;
+        const progress = (currentTime / duration) * 100;
+
+        const currentMinutes = Math.floor(currentTime / 60);
+        const currentSeconds = Math.floor(currentTime % 60);
+        const durationMinutes = Math.floor(duration / 60);
+        const durationSeconds = Math.floor(duration % 60);
+
+        const timeString = `${currentMinutes}:${(currentSeconds < 10 ? '0' : '')}${currentSeconds} / ${durationMinutes}:${(durationSeconds < 10 ? '0' : '')}${durationSeconds}`;
+
+        this.timer.textContent = timeString;
+
+        this.progressBar.style.width = `${progress}%`;
+    }
+}
+
+const musicPlayer = new MusicPlayer();

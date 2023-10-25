@@ -11,6 +11,7 @@ body {
   background-repeat: no-repeat;
 }
 
+/* Title of project styles */
 h1 {
   font-size: 80px;
   margin-bottom: 100px;
@@ -19,6 +20,7 @@ h1 {
     0 0 5px rgb(253, 253, 253);
 }
 
+/* Lights styles */
 .circle-container {
   display: flex;
 }
@@ -120,6 +122,7 @@ h1 {
   animation: glow12 1s infinite;
 }
 
+/* Lights glow effect styles */
 @keyframes glow1 {
   0%,
   100% {
@@ -240,6 +243,7 @@ h1 {
   }
 }
 
+/* On and Off buttons styles */
 .buttons {
   display: flex;
   justify-content: center;
@@ -262,8 +266,9 @@ h1 {
   border: 2px solid #e7e7e7;
 }
 
+/* Speed slider of glow effect styles */
 .slider-container {
-  width: 220px;
+  width: 230px;
   margin-left: 100px;
   display: flex;
   align-items: center;
@@ -286,6 +291,7 @@ input[type="range"] {
   background-color: #fffffa;
 }
 
+/* Snow effect styles */
 .snowflakes-container {
   position: absolute;
   top: 0;
@@ -326,4 +332,105 @@ input[type="range"] {
   50% {
     transform: translateX(100px);
   }
+}
+
+/* Music player styles */
+.music-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 40px;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+}
+
+#album-cover-img {
+  width: 200px;
+  height: 150px;
+  margin-bottom: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.music-details {
+  text-align: center;
+}
+
+#song-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+#artist,
+#album {
+  font-size: 14px;
+  color: #777;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+/* Timer styles */
+.timer {
+  font-size: 14px;
+  color: #333;
+  margin: 20px 0 0;
+  order: 1;
+}
+
+/* Progress container styles */
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  order: 2;
+}
+
+/* Progress bar styles */
+.progress-bar {
+  width: 100%;
+  background: #ccc;
+  height: 6px;
+  border-radius: 2px;
+  margin: 10px 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.progress {
+  width: 0;
+  height: 100%;
+  background: #00a8cc;
+  border-radius: 2px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  order: 2;
+  margin: 10px 0;
+}
+
+.music-player button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  width: 60px;
+  margin: 5px;
+  padding: 5px;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.music-player button:hover {
+  color: #00a8cc;
 }

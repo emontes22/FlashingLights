@@ -35,6 +35,26 @@
       <input type="range" min="1" max="5" value="1" id="speedSlider">
     </div>
   </div>
+  <div class="music-player">
+    <img id="album-cover-img" src="cover.jpg" alt="Album Cover">
+    <div class="music-details">
+      <h2 id="song-title">Song Title</h2>
+      <p id="artist">Artist</p>
+      <p id="album">Album</p>
+      <div class="timer" id="timer">0:00 / 0:00</div>
+    </div>
+    <div class="progress-bar" id="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="controls">
+      <button id="skip-button">Skip</button>
+      <button id="play-pause-button">Play</button>
+      <input id="volume-control" type="range" min="0" max="100">
+    </div>
+    <audio id="audio-element" controlslist="nodownload noremoteplayback">
+      <source src="(Ghost) Riders in the Sky - Johnny Cash.mp3" type="audio/mpeg">
+    </audio>
+  </div>
 
   <script src="scripts/script.js"></script>
 </body>
