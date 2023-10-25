@@ -180,22 +180,83 @@ class MusicPlayer {
         this.timer = document.getElementById('timer');
         this.dragging = false;
 
-        this.musicData = {
-            albumCover: '/cover.jpg',
-            title: 'Riders in the Sky',
-            artist: 'Johnny Cash',
-            album: 'Ghost',
-            audioFile: '/(Ghost) Riders in the Sky - Johnny Cash.mp3',
-        };
+        this.musicData = [
+            {
+                albumCover: 'assets/images/cover1.jpg',
+                title: 'Merry Christmas',
+                artist: 'Ed Sheeran ft. Elton John',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song1.mp3',
+            },
+            {
+                albumCover: 'assets/images/cover2.jpg',
+                title: 'Feliz Navidad',
+                artist: 'Jose Feliciano',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song2.mp3',
+            },
+            {
+                albumCover: 'assets/images/cover3.jpg',
+                title: 'Underneath the Tree',
+                artist: 'Kelly Clarkson',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song3.mp3',
+            },
+            {
+                albumCover: 'assets/images/cover4.jpg',
+                title: 'Somewhere in My Memory',
+                artist: 'Leslie Bricusse',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song4.mp3',
+            },
+            {
+                albumCover: 'assets/images/cover5.jpg',
+                title: 'We Three Gentlemen',
+                artist: 'Lidsey Stirling',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song5.mp3',
+            },
+            {
+                albumCover: 'assets/images/cover6.jpg',
+                title: 'All I Want For Chsristmas is You',
+                artist: 'Mariah Carey',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song6.mp3',
+            },
+            {
+                albumCover: 'assets/images/cover7.jpg',
+                title: 'Its Beginning To Look a Lot Like Christmas',
+                artist: 'Michael Buble',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song7.mp3',
+            },
+            {
+                albumCover: 'assets/images/cover8.jpg',
+                title: 'Rockin Around the Christmas Tree',
+                artist: 'Brenda Lee',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song8.mp3',
+            },
+            {
+                albumCover: 'assets/images/cover9.jpg',
+                title: 'Last Christmas',
+                artist: 'Wham',
+                album: 'Christmas Songs',
+                audioFile: 'assets/audio/song9.mp3',
+            }
+        ];
 
+        this.currentSongIndex = 0;
+        this.currentSong = this.musicData[this.currentSongIndex];
+        this.updateUI();
         this.initMusicPlayer();
     }
 
     initMusicPlayer() {
-        this.albumCoverImg.src = this.musicData.albumCover;
-        this.songTitle.textContent = this.musicData.title;
-        this.artist.textContent = this.musicData.artist;
-        this.album.textContent = this.musicData.album;
+        this.albumCoverImg.src = this.currentSong.albumCover;
+        this.songTitle.textContent = this.currentSong.title;
+        this.artist.textContent = this.currentSong.artist;
+        this.album.textContent = this.currentSong.album;
         this.volumeControl.value = 50;
 
         this.playPauseButton.addEventListener('click', this.togglePlayPause.bind(this));
@@ -228,7 +289,7 @@ class MusicPlayer {
         });
 
         this.skipButton.addEventListener('click', () => {
-            // Implement logic to skip to the next song
+            this.skipToNext();
         });
     }
 
@@ -243,7 +304,23 @@ class MusicPlayer {
     }
 
     skipToNext() {
-        // Implement logic to skip to the next song
+        this.currentSongIndex = (this.currentSongIndex + 1) % this.musicData.length;
+        this.currentSong = this.musicData[this.currentSongIndex];
+        this.updateUI();
+        this.audioElement.pause();
+        this.audioElement.src = '';
+        this.audioElement.src = this.currentSong.audioFile;
+        this.audioElement.oncanplay = () => {
+            this.audioElement.play();
+            this.audioElement.oncanplay = null;
+        };
+    }
+
+    updateUI() {
+        this.albumCoverImg.src = this.currentSong.albumCover;
+        this.songTitle.textContent = this.currentSong.title;
+        this.artist.textContent = this.currentSong.artist;
+        this.album.textContent = this.currentSong.album;
     }
 
     adjustVolume() {
